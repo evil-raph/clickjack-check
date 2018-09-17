@@ -1,0 +1,29 @@
+{
+  "name": "clickjack-check",
+  "version": "0.0.0",
+  "description": "Script that checks wether a webpage is susceptible to clickjacking",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin":{
+    "clickjack-check": "./bin/global.js",
+    "cjc": "./bin/global.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evil-raph/clickjack-check.git"
+  },
+  "keywords": [
+    "click",
+    "clickjack",
+    "iframe"
+  ],
+  "preferGlobal": true,
+  "author": "Raphael Ferreira (contact@raph.guru)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/evil-raph/clickjack-check/issues"
+  },
+  "homepage": "https://github.com/evil-raph/clickjack-check#readme"
+}
