@@ -49,18 +49,41 @@ const ALLOW_FROM_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS = {
   "Samsung Internet": false
 };
 
-exports.csp_supportive_browser_version = (browser_family_name) => {
+const csp_supportive_browser_version = (browser_family_name) => {
   return CSP_SUPPORTING_BROWSER_VERSIONS[browser_family_name] || undefined;
 };
 
-exports.x_frame_supportive_browser_version = (browser_family_name) => {
+const x_frame_supportive_browser_version = (browser_family_name) => {
   return BASIC_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS[browser_family_name] || undefined;
 };
 
-exports.sameorigin_x_frame_supportive_browser_version = (browser_family_name) => {
+const sameorigin_x_frame_supportive_browser_version = (browser_family_name) => {
   return SAMEORIGIN_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS[browser_family_name] || undefined;
 };
 
-exports.allow_from_x_frame_supportive_browser_version = (browser_family_name) => {
+const allow_from_x_frame_supportive_browser_version = (browser_family_name) => {
   return ALLOW_FROM_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS[browser_family_name] || undefined;
 };
+
+exports.check_support = (agent) => {
+    // CSP related intel
+    const csp_version = csp_supportive_browser_version(agent.toJSON().family);
+    const supports_csp = csp_version ? agent.satisfies('>='+csp_version) : false;
+  
+    // X-FRAME related intel
+    const x_frame_options_version = x_frame_supportive_browser_version(agent.toJSON().family);
+    const supports_basic_x_frame = x_frame_options_version ? agent.satisfies('>='+x_frame_options_version) : false;
+
+    const sameorigin_x_frame_options_version = sameorigin_x_frame_supportive_browser_version(agent.toJSON().family);
+    const supports_sameorigin_x_frame = sameorigin_x_frame_options_version ? agent.satisfies('>'+sameorigin_x_frame_options_version) : false;
+
+    const allow_from_x_frame_options_version = allow_from_x_frame_supportive_browser_version(agent.toJSON().family);
+    const supports_allow_from_x_frame = allow_from_x_frame_options_version ? agent.satisfies('>'+allow_from_x_frame_options_version) : false;
+
+    return {
+      supports_csp: supports_csp,
+      supports_basic_x_frame: supports_basic_x_frame,
+      supports_sameorigin_x_frame: supports_sameorigin_x_frame,
+      supports_allow_from_x_frame: supports_allow_from_x_frame
+    }
+}

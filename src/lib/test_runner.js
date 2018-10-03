@@ -30,9 +30,7 @@ const build_report = (_useragent, test_data) => {
       report_table.push({
         'browser-family': report[browsers.USER_AGENTS_TESTING_POOL[i]]['browser-family'],
         'browser-version': report[browsers.USER_AGENTS_TESTING_POOL[i]]['browser-version'],
-        'supports-csp': report[browsers.USER_AGENTS_TESTING_POOL[i]]['supports-csp'],
-        'supports-x-frame': report[browsers.USER_AGENTS_TESTING_POOL[i]]['supports-x-frame'],
-        'protection-method': protection_status.method_of_protection,
+        'valid-protection-method': protection_status.method_of_protection,
         'protected': protection_status.protected
       });
     }
@@ -49,21 +47,16 @@ const build_report = (_useragent, test_data) => {
 };
 
 const print_single_ua_info = (agent, csp, x_frame) => {
-  // CSP related intel
-  const csp_version = browsers.csp_supportive_browser_version(agent.toJSON().family);
-  const supports_csp = csp_version ? agent.satisfies('>'+csp_version) : false;
-
-  // X-FRAME related intel
-  const x_frame_options_version = browsers.x_frame_supportive_browser_version(agent.toJSON().family);
-  const supports_x_frame = x_frame_options_version ? agent.satisfies('>'+x_frame_options_version) : false;
-
   // Browser Info
   console.log(agent.toJSON().family);
   console.log(agent.toVersion());
 
+  // Browser support info
+  console.log(browsers.check_support(agent));
+
   // Response Headers of Interest
-  console.log('x-frame-options: >>{x_frame}<<'.replace('{x_frame}', x_frame));
-  console.log('content-security-policy: >>{csp}<<'.replace('{csp}', csp));
+  console.log('x-frame-options: {x_frame}'.replace('{x_frame}', x_frame));
+  console.log('content-security-policy: {csp}'.replace('{csp}', csp));
 
   // Separator
   console.log('');
@@ -78,34 +71,23 @@ const protection_check = (_useragent, csp, x_frame) => {
   // parse user agent
   const agent = useragent.parse(_useragent);
 
-  // CSP related intel
-  const csp_version = browsers.csp_supportive_browser_version(agent.toJSON().family);
-  const supports_csp = csp_version ? agent.satisfies('>'+csp_version) : false;
-
-  // X-FRAME related intel
-  const x_frame_options_version = browsers.x_frame_supportive_browser_version(agent.toJSON().family);
-  const supports_basic_x_frame = x_frame_options_version ? agent.satisfies('>'+x_frame_options_version) : false;
-
-  const sameorigin_x_frame_options_version = browsers.sameorigin_x_frame_supportive_browser_version(agent.toJSON().family);
-  const supports_sameorigin_x_frame = sameorigin_x_frame_options_version ? agent.satisfies('>'+sameorigin_x_frame_options_version) : false;
-
-  const allow_from_x_frame_options_version = browsers.allow_from_x_frame_supportive_browser_version(agent.toJSON().family);
-  const supports_allow_from_x_frame = allow_from_x_frame_options_version ? agent.satisfies('>'+allow_from_x_frame_options_version) : false;
+  // Headers support intel
+  const headers_support = browsers.check_support(agent);
 
   // Generate protected status
-  if (supports_csp && /^(.*)frame-ancestors (.*)$/.test(csp)) {
+  if (headers_support.supports_csp && /^(.*)frame-ancestors (.*)$/.test(csp)) {
     protection_status.method_of_protection = 'csp: ' + csp;
     protection_status.protected = true;
   }
-  else if (supports_basic_x_frame && /^DENY$/.test(x_frame)){
+  else if (headers_support.supports_basic_x_frame && /^DENY$/.test(x_frame)){
     protection_status.method_of_protection = 'x_frame: ' + x_frame;
     protection_status.protected = true;
   }
-  else if (supports_sameorigin_x_frame && /^SAMEORIGIN$/.test(x_frame)){
+  else if (headers_support.supports_sameorigin_x_frame && /^SAMEORIGIN$/.test(x_frame)){
     protection_status.method_of_protection = 'x_frame: ' + x_frame;
     protection_status.protected = true;
   }
-  else if (supports_allow_from_x_frame && /^ALLOW-FROM(.*)$/.test(x_frame)){
+  else if (headers_support.supports_allow_from_x_frame && /^ALLOW-FROM(.*)$/.test(x_frame)){
     protection_status.method_of_protection = 'x_frame: ' + x_frame;
     protection_status.protected = true;
   }
