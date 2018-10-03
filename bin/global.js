@@ -6,7 +6,8 @@ const program = require('commander');
 program
   .version('0.0.1')
   .description('This tool can check whether the provided webpage has the proper headers to help prevent Clickjacking for a limited set of browsers')
-  .option('-c --cookies <cookie_string>', 'set cookies in the headers of the get requests')
+  .option('-v --verbose', 'Exhibits more detailed status during the test run')
+  .option('-c --cookies <cookie_string>', 'set the provided cookie string in the headers of the testing requests')
   .arguments('<url>')
   .action(function(url){
     url_to_check = url;
@@ -19,4 +20,4 @@ if (typeof url_to_check === 'undefined') {
   process.exit(1);
 }
 
-check(url_to_check, program.cookies);
+check(url_to_check, program.cookies, program.verbose);
