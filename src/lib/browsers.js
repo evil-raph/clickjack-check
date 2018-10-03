@@ -32,19 +32,20 @@ const BASIC_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS = {
 };
 
 const SAMEORIGIN_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS = {
-  "Chrome": "61.0",
-  "Safari": "4.0",
-  "Firefox": "3.6.9",
-  "Opera": "48.0",
-  "IE": "8.0",
-  "Samsung Internet": "0"
+  "Chrome": BASIC_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS["Chrome"],
+  "Safari": BASIC_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS["Safari"],
+  "Firefox": BASIC_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS["Firefox"],
+  "Opera": BASIC_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS["Opera"],
+  "IE": BASIC_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS["IE"],
+  "Samsung Internet": BASIC_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS["Samsung Internet"]
 };
 
 const ALLOW_FROM_X_FRAME_OPTIONS_SUPPORTING_BROWSER_VERSIONS = {
   "Chrome": false,
   "Safari": false,
-  "Firefox": "3.6.9",
-  "IE": "8.0",
+  "Firefox": "18.0",
+  "IE": "9.0",
+  "Opera": "27.0",
   "Samsung Internet": false
 };
 

@@ -39,6 +39,12 @@ const build_report = (_useragent, test_data) => {
 
     // Printing out table
     console.table(report_table);
+
+    // Printing out finishing screen
+    console.log('\nYou can find more information regarding Clickjacking and browsers support defense mechanisms in the following adressess:');
+    console.log('\t- Clickjacking defense cheat sheet: https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet');
+    console.log('\t- X-FRAME-OPTIONS compatibility sheet: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options');
+    console.log('\t- Content Security Policy compatibility sheet: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors');
   }
 };
 
@@ -87,7 +93,7 @@ const protection_check = (_useragent, csp, x_frame) => {
   const supports_allow_from_x_frame = allow_from_x_frame_options_version ? agent.satisfies('>'+allow_from_x_frame_options_version) : false;
 
   // Generate protected status
-  if (supports_csp && /^frame-ancestors (.*)$/.test(csp)) {
+  if (supports_csp && /^(.*)frame-ancestors (.*)$/.test(csp)) {
     protection_status.method_of_protection = 'csp: ' + csp;
     protection_status.protected = true;
   }
@@ -99,12 +105,12 @@ const protection_check = (_useragent, csp, x_frame) => {
     protection_status.method_of_protection = 'x_frame: ' + x_frame;
     protection_status.protected = true;
   }
-  else if (supports_allow_from_x_frame && /^ALLOW-FROM (.*)$/.test(x_frame)){
+  else if (supports_allow_from_x_frame && /^ALLOW-FROM(.*)$/.test(x_frame)){
     protection_status.method_of_protection = 'x_frame: ' + x_frame;
     protection_status.protected = true;
   }
   else {
-    console.log('Unprotected UA detected:');
+    console.log('Potential unprotected User Agent detected:');
     print_single_ua_info(agent, csp, x_frame)
   }
 
@@ -115,28 +121,18 @@ const test = (_useragent, url, cookie_header, verbose) => {
   if (verbose) console.log('Starting test for ' + _useragent);
 
   request.get(url, {"rejectUnauthorized": false, headers: {'User-Agent': _useragent, 'Cookie': cookie_header}}, (err, r, b) => {
+    if (err) {
+      throw 'Something went wrong during tests';
+      process.exit(1);
+    }
 
     // User Agent parsing
     const agent = useragent.parse(_useragent);
-
-    // CSP related intel
-    const csp_version = browsers.csp_supportive_browser_version(agent.toJSON().family);
-    const supports_csp = csp_version ? agent.satisfies('>'+csp_version) : false;
-
-    // X-FRAME related intel
-    const x_frame_options_version = browsers.x_frame_supportive_browser_version(agent.toJSON().family);
-    const supports_x_frame = x_frame_options_version ? agent.satisfies('>'+x_frame_options_version) : false;
-
-    if (verbose) {
-      print_single_ua_info(agent, r.headers['content-security-policy'], r.headers['x-frame-options']);
-    }
 
     // Check if this is the last request. If so, build report.
     build_report(_useragent, {
       'browser-family': agent.toJSON().family,
       'browser-version': agent.toVersion(),
-      'supports-csp': supports_csp,
-      'supports-x-frame': supports_x_frame,
       'x-frame-options': r.headers['x-frame-options'],
       'content-security-policy': r.headers['content-security-policy']
     });
