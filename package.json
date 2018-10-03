@@ -1,6 +1,6 @@
 {
   "name": "clickjack-check",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Script that checks wether a webpage is susceptible to clickjacking",
   "main": "./src/index.js",
   "scripts": {

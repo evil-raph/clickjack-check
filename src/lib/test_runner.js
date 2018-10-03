@@ -42,7 +42,7 @@ const build_report = (_useragent, test_data) => {
     console.log('\nYou can find more information regarding Clickjacking and browsers support defense mechanisms in the following adressess:');
     console.log('\t- Clickjacking defense cheat sheet: https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet');
     console.log('\t- X-FRAME-OPTIONS compatibility sheet: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options');
-    console.log('\t- Content Security Policy compatibility sheet: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors');
+    console.log('\t- Content Security Policy compatibility sheet: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors\n');
   }
 };
 
