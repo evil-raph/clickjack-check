@@ -99,9 +99,7 @@ const protection_check = (_useragent, csp, x_frame) => {
   return protection_status;
 };
 
-const test = (_useragent, url, cookie_header, verbose) => {
-  if (verbose) console.log('Starting test for ' + _useragent);
-
+const test = (_useragent, url, cookie_header) => {
   request.get(url, {"rejectUnauthorized": false, headers: {'User-Agent': _useragent, 'Cookie': cookie_header}}, (err, r, b) => {
     if (err) {
       throw 'Something went wrong during tests';
@@ -121,7 +119,7 @@ const test = (_useragent, url, cookie_header, verbose) => {
   });
 }
 
-exports.default = (url, cookies, verbose) => {
+exports.default = (url, cookies) => {
   // Cookie Header setting
   let cookie_header = cookies ? request.cookie(cookies) : '';
 
@@ -135,7 +133,7 @@ exports.default = (url, cookies, verbose) => {
     console.log('Starting test requests for different User Agents...');
     for (let i in browsers.USER_AGENTS_TESTING_POOL){
       let user_agent = browsers.USER_AGENTS_TESTING_POOL[i];
-      test(user_agent, url, cookie_header, verbose);
+      test(user_agent, url, cookie_header);
     }
   });
 };
